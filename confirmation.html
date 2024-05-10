@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.16.0/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            height: 100vh;
+            background-color: #f4f4f4;
+            background-image: url('https://source.unsplash.com/1600x900/?movies'); /* Update the path to your image file */
+        background-size: cover;
+        background-position: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <button id="generatePdf">Generate PDF</button>
+
+    <script>
+        // Parse query string to get booking details
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const name = urlParams.get('name');
+        const email = urlParams.get('email');
+        const tickets = urlParams.get('tickets');
+        const movie = urlParams.get('movie');
+
+        // Generate random ticket number
+        const ticketNo = Math.floor(Math.random() * 1000000) + 1;
+
+        // Calculate cost based on selected movie
+        let ticketCost;
+        let cost;
+        let gst;
+        switch (movie) {
+            case 'Rathnam':
+                cost = 250;
+                gst = cost * (15/100);
+                ticketCost = cost + gst;
+                break;
+            case 'Star':
+                cost = 150;
+                gst = cost * (15/100);
+                ticketCost = cost + gst;
+                break;
+            case 'Aranmanai 4':
+                cost = 270;
+                gst = cost * (15/100);
+                ticketCost = cost + gst;
+                break;
+            default:
+                ticketCost = 0;
+        }
+
+        const totalCost = tickets * ticketCost;
+
+        // Generate PDF when button is clicked
+        document.getElementById('generatePdf').addEventListener('click', async function() {
+            const pdfDoc = await PDFLib.PDFDocument.create();
+            const page = pdfDoc.addPage();
+            const { width, height } = page.getSize();
+            const fontSize = 20;
+            const content = `
+                            Booking Confirmation
+                
+
+                Ticket No.: ${ticketNo}
+
+                Movie: ${movie}
+
+                Booked Person Name: ${name}
+
+                Email ID: ${email}
+
+                Number of Tickets: ${tickets}
+
+                Total Cost: Rs.${totalCost}
+            `;
+            page.drawText(content, {
+                x: 50,
+                y: height - 50,
+                size: fontSize,
+            });
+
+            const pdfBytes = await pdfDoc.save();
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            saveAs(blob, 'booking_confirmation.pdf');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Booking System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Book Your Tickets</h1>
+        <form id="bookingForm" action="confirmation.html" method="post">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="tickets">Number of Tickets:</label>
+            <input type="number" id="tickets" name="tickets" min="1" required>
+
+            <label for="movie">Select Movie:</label>
+            <select id="movie" name="movie" required>
+                <option value="">Select Movie</option>
+                <option value="Rathnam">Rathnam</option> 
+                <option value="Star">Star</option>
+                <option value="Aranmanai 4">Aranmanai 4</option>
+            </select>
+
+            <input type="submit" value="Book Now">
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('bookingForm').addEventListener('submit', function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+
+            // Get form data
+            const formData = new FormData(this);
+
+            // Convert form data to JSON
+            const formDataJson = {};
+            formData.forEach((value, key) => {
+                formDataJson[key] = value;
+            });
+
+            // Redirect to confirmation page with form data as query parameters
+            const queryString = new URLSearchParams(formDataJson).toString();
+            window.location.href = 'confirmation.html?' + queryString;
+        });
+    </script>
+</body>
+</html>
